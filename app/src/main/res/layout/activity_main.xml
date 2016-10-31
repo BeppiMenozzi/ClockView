@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    tools:context="br.tiagohm.clockview.app.MainActivity">
+
+    <br.tiagohm.clockview.ClockView
+        android:id="@+id/relogio"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="15dp"
+        app:digitalClockTextColor="#aa126cd2"
+        app:dotColor="#7f418616"
+        app:hour="9"
+        app:hourHandColor="#FFF"
+        app:minute="45"
+        app:minuteHandColor="#FFF"
+        app:numeralColor="#AFFF"
+        app:second="0"
+        app:secondHandColor="#2F00"
+        app:showDigitalClock="true"
+        app:showDots="true"
+        app:showNumerals="true"
+        app:showSecondHand="true"/>
+</RelativeLayout>
