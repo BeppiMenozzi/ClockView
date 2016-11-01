@@ -18,7 +18,7 @@ allprojects {
 Add the dependency:
 ```gradle
 	dependencies {
-	        compile 'com.github.tiagohm:ClockView:0.1.0'
+	        compile 'com.github.tiagohm:ClockView:0.1.1'
 	}
 ```
 
