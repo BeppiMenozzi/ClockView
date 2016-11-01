@@ -14,5 +14,6 @@
         <attr name="numeralColor" format="color"/>
         <attr name="hourHandColor" format="color"/>
         <attr name="digitalClockTextColor" format="color"/>
+        <attr name="circleColor" format="color"/>
     </declare-styleable>
 </resources>

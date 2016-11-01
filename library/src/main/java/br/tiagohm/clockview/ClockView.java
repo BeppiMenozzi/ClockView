@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -22,7 +23,8 @@ public class ClockView extends View {
     private static final int SEC_DEG = 360 / 60;
     private static final int MIN_DEG = 360 / 60;
     private static final int HOUR_DEG = 360 / 12;
-    private Paint secPaint, minPaint, hourPaint, dotPaint, numeralsPaint, dotCentrePaint, digitalClockPaint;
+    private Paint secPaint, minPaint, hourPaint, dotPaint, circlePaint;
+    private TextPaint numeralsPaint, digitalClockPaint;
     private RectF mRectF;
     private Rect mRect;
     //Segundos, minutos e horas
@@ -73,19 +75,19 @@ public class ClockView extends View {
         mMinute = a.getInt( R.styleable.ClockView_minute, c.get( Calendar.MINUTE ) );
         mHour = a.getInt( R.styleable.ClockView_hour, c.get( Calendar.HOUR ) );
 
-        //Ponto central
-        dotCentrePaint = new Paint( Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG );
-        dotCentrePaint.setColor( Color.BLACK );
-        dotCentrePaint.setStyle( Paint.Style.FILL_AND_STROKE );
+        //Fundo
+        circlePaint = new Paint( Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG );
+        circlePaint.setColor( a.getColor( R.styleable.ClockView_circleColor, 0 ) );
+        circlePaint.setStyle( Paint.Style.FILL_AND_STROKE );
 
-        numeralsPaint = new Paint( Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG );
+        numeralsPaint = new TextPaint( Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG );
         numeralsPaint.setColor( a.getColor( R.styleable.ClockView_numeralColor, Color.WHITE ) );
         numeralsPaint.setStyle( Paint.Style.FILL_AND_STROKE );
         numeralsPaint.setTextAlign( Paint.Align.CENTER );
         numeralsPaint.setStrokeCap( Paint.Cap.ROUND );
 
         //Pintura do relógio digital.
-        digitalClockPaint = new Paint( Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG );
+        digitalClockPaint = new TextPaint( Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG );
         digitalClockPaint.setColor( a.getColor( R.styleable.ClockView_digitalClockTextColor, Color.WHITE ) );
         digitalClockPaint.setStyle( Paint.Style.FILL_AND_STROKE );
         digitalClockPaint.setTextAlign( Paint.Align.CENTER );
@@ -102,7 +104,7 @@ public class ClockView extends View {
         secPaint = new Paint( Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG );
         secPaint.setColor( a.getColor( R.styleable.ClockView_secondHandColor, Color.RED ) );
         secPaint.setStyle( Paint.Style.FILL_AND_STROKE );
-        secPaint.setStrokeWidth( 3 );
+        secPaint.setStrokeWidth( 2 );
         secPaint.setStrokeCap( Paint.Cap.ROUND );
 
         //Pintura do ponteiro dos minutos
@@ -352,10 +354,28 @@ public class ClockView extends View {
         requestLayout();
     }
 
+    /**
+     * Obtém a cor do fundo.
+     */
+    public int getCircleColor()
+    {
+        return circlePaint.getColor();
+    }
+
+    /**
+     * Define a cor do fundo.
+     */
+    public void setCircleColor( int color )
+    {
+        circlePaint.setColor( color );
+        invalidate();
+        requestLayout();
+    }
+
     @Override
     protected void onDraw( Canvas canvas )
     {
-        super.onDraw( canvas );
+        desenharFundo( canvas );
         desenharPontos( canvas );
         desenharRelogioDigital( canvas );
         desenharPonteiros( canvas, getHour(), getMinute(), getSecond() );
@@ -378,8 +398,9 @@ public class ClockView extends View {
 
         radius = width / 2;
 
-        digitalClockPaint.setTextSize( radius * 0.23f );
-        numeralsPaint.setTextSize( radius * 0.12f );
+        digitalClockPaint.setTextSize( (float)Math.sqrt( radius ) * 2.5f );
+        numeralsPaint.setTextSize( (float)Math.sqrt( radius ) * 2 );
+        numeralsPaint.setFakeBoldText( true );
         numeralsPaint.setTextAlign( Paint.Align.CENTER );
         numeralsPaint.getTextBounds( "0", 0, 1, mRect );
         numeralTextHeight = mRect.height() / 2f - mRect.bottom;
@@ -393,14 +414,14 @@ public class ClockView extends View {
 
         secHand.reset();
         secHand.moveTo( mRectF.centerX(), mRectF.centerY() );
-        secHand.lineTo( mRectF.centerX(), mRectF.centerY() - radius );
+        secHand.lineTo( mRectF.centerX(), mRectF.centerY() - (radius - numeralTextHeight * 1.41f) );
         secHand.close();
 
         minHand.reset();
         minHand.moveTo( mRectF.centerX(), mRectF.centerY() );
         minHand.lineTo( mRectF.centerX() + radius * 0.025f, mRectF.centerY() );
-        minHand.lineTo( mRectF.centerX() + radius * 0.0015625f, mRectF.centerY() - radius );
-        minHand.lineTo( mRectF.centerX() - radius * 0.0015625f, mRectF.centerY() - radius );
+        minHand.lineTo( mRectF.centerX() + radius * 0.0015625f, mRectF.centerY() - (radius - numeralTextHeight * 1.41f) );
+        minHand.lineTo( mRectF.centerX() - radius * 0.0015625f, mRectF.centerY() - (radius - numeralTextHeight * 1.41f) );
         minHand.lineTo( mRectF.centerX() - radius * 0.025f, mRectF.centerY() );
         minHand.close();
 
@@ -413,13 +434,22 @@ public class ClockView extends View {
         hourHand.close();
     }
 
+    private void desenharFundo( Canvas canvas )
+    {
+        canvas.save();
+        canvas.drawCircle( mRectF.centerX(), mRectF.centerY(),
+                radius + 5,
+                circlePaint );
+        canvas.restore();
+    }
+
     private void desenharRelogioDigital( Canvas canvas )
     {
         if( isShowDigitalClock() )
         {
             canvas.save();
             canvas.drawText( String.format( Locale.ENGLISH, "%02d:%02d:%02d", getHour(), getMinute(), getSecond() ),
-                    mRectF.centerX(), mRectF.centerY() + radius * 0.6f,
+                    mRectF.centerX(), mRectF.centerY() + radius * 0.5f,
                     digitalClockPaint );
             canvas.restore();
         }
@@ -438,14 +468,14 @@ public class ClockView extends View {
                 if( k == 0 && isShowNumerals() )
                 {
                     canvas.drawText( mNumerals[i],
-                            mRectF.centerX() + (float)Math.cos( angulo ) * radius,
-                            mRectF.centerY() + (float)Math.sin( angulo ) * radius + numeralTextHeight,
+                            mRectF.centerX() + (float)Math.cos( angulo ) * (radius - numeralTextHeight * 1.41f),
+                            mRectF.centerY() + (float)Math.sin( angulo ) * (radius - numeralTextHeight * 1.41f) + numeralTextHeight,
                             numeralsPaint );
                 }
                 else if( isShowDots() )
                 {
-                    canvas.drawCircle( mRectF.centerX() + (float)Math.cos( angulo + k * MIN_RAD ) * radius,
-                            mRectF.centerY() + (float)Math.sin( angulo + k * MIN_RAD ) * radius,
+                    canvas.drawCircle( mRectF.centerX() + (float)Math.cos( angulo + k * MIN_RAD ) * (radius - numeralTextHeight),
+                            mRectF.centerY() + (float)Math.sin( angulo + k * MIN_RAD ) * (radius - numeralTextHeight),
                             k == 0 ? radius * 0.02f : radius * 0.005f,
                             dotPaint );
                 }
