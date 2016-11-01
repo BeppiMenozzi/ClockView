@@ -1,9 +1,9 @@
 # ClockView
 
+[![](https://jitpack.io/v/tiagohm/ClockView.svg)](https://jitpack.io/#tiagohm/ClockView)
+
 <img src="https://raw.githubusercontent.com/tiagohm/ClockView/master/1.png" width="300">
 <img src="https://raw.githubusercontent.com/tiagohm/ClockView/master/2.png" width="300">
-
-[![](https://jitpack.io/v/tiagohm/ClockView.svg)](https://jitpack.io/#tiagohm/ClockView)
 
 Add it in your root build.gradle at the end of repositories:
 ```gradle
@@ -30,6 +30,7 @@ Add the dependency:
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="15dp"
+        app:circleColor="#EEE"
         app:digitalClockTextColor="#aa126cd2"
         app:dotColor="#7f418616"
         app:hour="9"
@@ -61,4 +62,5 @@ cv.setShowDigitalClock( false );
 cv.setShowDots( true );
 cv.setShowNumerals( true );
 cv.setShowSecondHand( true );
+cv.setCircleColor( COLOR.DKGRAY );
 ```
