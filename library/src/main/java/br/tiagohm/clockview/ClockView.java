@@ -50,18 +50,21 @@ public class ClockView extends View {
         init( attrs );
         startClock();
     }
+
+    public ClockView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init( attrs );
+        startClock();
+    }
+
     Calendar calendar;
     BTimer bt;
     void startClock() {
-        calendar = Calendar.getInstance();
         bt = new BTimer(1000, new Runnable() {
             @Override
             public void run() {
-                mSecond = calendar.get(Calendar.SECOND);
-                mMinute = calendar.get(Calendar.MINUTE);
-                mHour = calendar.get(Calendar.HOUR);
-                invalidate();
-                requestLayout();
+                calendar = Calendar.getInstance();
+                setTime(calendar.get(Calendar.HOUR), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND));
             }
         });
         bt.start();
@@ -259,6 +262,14 @@ public class ClockView extends View {
     public void setHour( int hour )
     {
         this.mHour = hour % 12;
+        invalidate();
+        requestLayout();
+    }
+
+    public void setTime (int hour, int minute, int second) {
+        this.mHour = hour % 12;
+        this.mMinute = minute % 60;
+        this.mSecond = second % 60;
         invalidate();
         requestLayout();
     }
