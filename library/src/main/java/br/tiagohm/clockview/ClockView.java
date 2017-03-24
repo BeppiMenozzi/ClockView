@@ -48,6 +48,23 @@ public class ClockView extends View {
     {
         super( context, attrs );
         init( attrs );
+        startClock();
+    }
+    Calendar calendar;
+    BTimer bt;
+    void startClock() {
+        calendar = Calendar.getInstance();
+        bt = new BTimer(1000, new Runnable() {
+            @Override
+            public void run() {
+                mSecond = calendar.get(Calendar.SECOND);
+                mMinute = calendar.get(Calendar.MINUTE);
+                mHour = calendar.get(Calendar.HOUR);
+                invalidate();
+                requestLayout();
+            }
+        });
+        bt.start();
     }
 
     private void init( AttributeSet attrs )
