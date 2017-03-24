@@ -18,7 +18,7 @@ allprojects {
 Add the dependency:
 ```gradle
 	dependencies {
-	        compile 'com.github.BeppiMenozzi:ClockView:0.1.2'
+	        compile 'com.github.BeppiMenozzi:ClockView:0.1.3'
 	}
 ```
 
